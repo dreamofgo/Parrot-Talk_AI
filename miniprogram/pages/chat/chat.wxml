@@ -1,5 +1,16 @@
 <!--pages/chat/chat.wxml-->
 <view class="chat-container">
+  <!-- 添加文档上传区域 -->
+  <view class="upload-area">
+    <button class="upload-btn" bindtap="uploadDocument">上传文档</button>
+    <view class="doc-list" wx:if="{{documents.length > 0}}">
+      <view class="doc-item" wx:for="{{documents}}" wx:key="fileID">
+        <text>{{item.name}}</text>
+        <text class="delete" bindtap="deleteDocument" data-id="{{item.fileID}}">×</text>
+      </view>
+    </view>
+  </view>
+  
   <scroll-view class="msg-list" scroll-y scroll-into-view="{{lastId}}" scroll-with-animation>
     <block wx:for="{{messages}}" wx:key="index">
       <view class="msg-item {{item.role === 'user' ? 'user-msg' : 'bot-msg'}}" id="msg-{{index}}">

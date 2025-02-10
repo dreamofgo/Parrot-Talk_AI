@@ -111,4 +111,36 @@
 .recording-btn.recording {
   background: #E64340;
   transform: scale(0.95);
+}
+
+.upload-area {
+  padding: 20rpx;
+  background: #fff;
+  border-bottom: 1rpx solid #eee;
+}
+
+.upload-btn {
+  background: #007AFF;
+  color: white;
+  font-size: 28rpx;
+  margin-bottom: 10rpx;
+}
+
+.doc-list {
+  max-height: 200rpx;
+  overflow-y: auto;
+}
+
+.doc-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10rpx;
+  background: #f5f5f5;
+  margin: 5rpx 0;
+  border-radius: 5rpx;
+}
+
+.delete {
+  color: #ff4444;
+  padding: 0 10rpx;
 } 

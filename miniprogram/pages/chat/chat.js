@@ -5,7 +5,8 @@ Page({
       { role: 'user', content: '你好！' }
     ],
     inputValue: '',
-    isRecording: false
+    isRecording: false,
+    documents: [] // 存储文档列表
   },
 
   // 输入处理
@@ -36,8 +37,10 @@ Page({
         if (res.result.error) {
           wx.showToast({
             title: res.result.error,
-            icon: 'none'
+            icon: 'none',
+            duration: 3000
           });
+          console.error('API 调用详细错误:', res.result.details);
           return;
         }
         
@@ -49,11 +52,12 @@ Page({
         this.scrollToBottom();
       },
       fail: err => {
+        console.error('云函数调用失败:', err);
         wx.showToast({
           title: '发送失败，请重试',
-          icon: 'none'
+          icon: 'none',
+          duration: 3000
         });
-        console.error('调用失败：', err);
       },
       complete: () => {
         wx.hideLoading();
@@ -125,15 +129,7 @@ Page({
   },
 
   onLoad() {
-    wx.showLoading({ title: '加载中' });
-    // 模拟数据请求
-    setTimeout(() => {
-      this.setData({ messages: [{
-        role: 'bot',
-        content: '欢迎使用智能聊天'
-      }] });
-      wx.hideLoading();
-    }, 500);
+    this.loadDocuments();
   },
 
   // 添加滚动到底部方法
@@ -142,5 +138,107 @@ Page({
     this.setData({
       lastId: `msg-${lastIndex}`
     });
+  },
+
+  // 上传文档
+  uploadDocument() {
+    wx.chooseMessageFile({
+      count: 1,
+      type: 'file',
+      extension: ['txt', 'docx', 'pdf'], // 支持的文件格式
+      success: res => {
+        const file = res.tempFiles[0];
+        // 检查文件大小
+        if (file.size > 20 * 1024 * 1024) { // 20MB 限制
+          wx.showToast({
+            title: '文件过大',
+            icon: 'none'
+          });
+          return;
+        }
+        this.uploadToCloud(file);
+      }
+    });
+  },
+
+  // 上传到云存储
+  async uploadToCloud(file) {
+    wx.showLoading({ title: '上传中...' });
+    try {
+      // 1. 上传文件到云存储
+      const cloudPath = `documents/${Date.now()}-${file.name}`;
+      const uploadRes = await wx.cloud.uploadFile({
+        cloudPath,
+        filePath: file.path,
+      });
+
+      // 2. 调用云函数处理文档
+      await wx.cloud.callFunction({
+        name: 'processDocument',
+        data: { fileID: uploadRes.fileID }
+      });
+
+      // 3. 保存文档信息
+      const db = wx.cloud.database();
+      await db.collection('user_documents').add({
+        data: {
+          fileID: uploadRes.fileID,
+          name: file.name,
+          uploadTime: new Date()
+        }
+      });
+
+      // 4. 更新文档列表
+      this.loadDocuments();
+      wx.showToast({ title: '上传成功' });
+    } catch (error) {
+      console.error('上传失败：', error);
+      wx.showToast({ title: '上传失败', icon: 'none' });
+    }
+    wx.hideLoading();
+  },
+
+  // 加载文档列表
+  async loadDocuments() {
+    try {
+      const db = wx.cloud.database();
+      const res = await db.collection('user_documents').get();
+      this.setData({ documents: res.data });
+    } catch (error) {
+      console.error('加载文档列表失败：', error);
+      if (error.errCode === -502005) {
+        wx.showToast({
+          title: '请先创建数据库集合',
+          icon: 'none',
+          duration: 2000
+        });
+      }
+    }
+  },
+
+  // 删除文档
+  async deleteDocument(e) {
+    const fileID = e.currentTarget.dataset.id;
+    try {
+      // 1. 删除云存储中的文件
+      await wx.cloud.deleteFile({ fileList: [fileID] });
+      
+      const db = wx.cloud.database();
+      // 2. 删除文档记录
+      await db.collection('user_documents')
+        .where({ fileID })
+        .remove();
+      
+      // 3. 删除向量化的文档块
+      await db.collection('document_vectors')
+        .where({ fileID })
+        .remove();
+
+      // 4. 更新列表
+      this.loadDocuments();
+      wx.showToast({ title: '删除成功' });
+    } catch (error) {
+      wx.showToast({ title: '删除失败', icon: 'none' });
+    }
   }
 }); 
