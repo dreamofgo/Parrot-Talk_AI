@@ -1,0 +1,27 @@
+{
+  "cloud": true,
+  "pages": [
+    "pages/chat/chat"
+  ],
+  "window": {
+    "backgroundColor": "#F6F6F6",
+    "navigationBarTitleText": "AI 助手",
+    "navigationBarBackgroundColor": "#ffffff",
+    "navigationBarTextStyle": "black"
+  },
+  "cloudfunctionRoot": "cloudfunctions/",
+  "requiredPrivateInfos": [
+    "getLocation"
+  ],
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的位置信息将用于获取本地服务"
+    },
+    "scope.record": {
+      "desc": "需要您的授权来使用语音输入功能"
+    }
+  },
+  "plugins": {
+
+  }
+} 

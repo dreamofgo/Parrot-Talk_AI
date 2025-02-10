@@ -1,0 +1,25 @@
+{
+  "miniprogramRoot": "miniprogram/",
+  "cloudfunctionRoot": "cloudfunctions/",
+  "setting": {
+    "nodeModulesPath": "node_modules",
+    "enhance": true,
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    }
+  },
+  "appid": "wxaf907a0631769656",
+  "compileType": "miniprogram",
+  "libVersion": "3.7.7",
+  "srcMiniprogramRoot": "miniprogram/",
+  "packOptions": {
+    "ignore": [],
+    "include": []
+  },
+  "editorSetting": {
+    "tabIndent": "insertSpaces",
+    "tabSize": 2
+  }
+}

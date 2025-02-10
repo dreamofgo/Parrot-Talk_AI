@@ -1,0 +1,48 @@
+/**app.wxss**/
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  height: 100vh;
+} 
+
+button {
+  background: initial;
+}
+
+button:focus{
+  outline: 0;
+}
+
+button::after{
+  border: none;
+}
+
+
+page {
+  height: 100%;
+  background-color: #F5F5F5;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  background-color: #f0f0f0;
+  font-family: Arial, sans-serif;
+}
+
+.msg-list {
+  flex: 1;
+  padding: 20rpx;
+}
+
+.input-area {
+  padding: 20rpx;
+  background: #fff;
+}
+
+/* 聊天页面容器 */
+.chat-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
