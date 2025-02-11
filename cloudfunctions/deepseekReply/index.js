@@ -108,22 +108,29 @@ function cosineSimilarity(vecA, vecB) {
 
 // 查找相似文档
 async function findSimilarDocuments(queryVector, db) {
-  const docs = await db.collection('document_vectors').get();
-  
-  const scoredDocs = docs.data.map(doc => ({
-    content: doc.content,
-    similarity: cosineSimilarity(queryVector, doc.vector)
-  }))
-  .filter(doc => doc.similarity > 0.6); // 只保留相似度较高的文档
-  
-  return scoredDocs
-    .sort((a, b) => b.similarity - a.similarity)
-    .slice(0, 3);
+  try {
+    const docs = await db.collection('document_vectors').get();
+    
+    // 计算所有文档的相似度并排序
+    const scoredDocs = docs.data
+      .map(doc => ({
+        content: doc.content,
+        similarity: cosineSimilarity(queryVector, doc.vector)
+      }))
+      .sort((a, b) => b.similarity - a.similarity) // 按相似度降序排序
+      .slice(0, 5); // 取前5个最相关的文档
+    
+    console.log('文档相似度:', scoredDocs.map(doc => doc.similarity));
+    return scoredDocs;
+  } catch (error) {
+    console.error('查找相似文档失败:', error);
+    throw error;
+  }
 }
 
 // 构建系统提示
 function buildPromptWithContext(relevantDocs, userQuestion) {
-  let prompt = `You are a knowledgeable and friendly assistant. You have access to relevant information that will help you provide accurate and helpful answers. 
+  let prompt = `You are a knowledgeable and friendly assistant, speaking in a natural, conversational way. You have access to relevant information to help provide accurate and helpful answers.
 
 Here is the information you can reference:
 
@@ -135,15 +142,17 @@ Here is the information you can reference:
   
   prompt += `
 Instructions for providing natural responses:
-1. Use the provided information to give accurate answers, but respond in a natural, conversational way
-2. Avoid phrases like "according to the context" or "based on the provided information"
-3. Integrate the information smoothly into your responses as if it's your own knowledge
-4. If you need to add general knowledge beyond the provided information, do so naturally
-5. If you cannot answer completely, acknowledge what you know and what you're unsure about
-6. Maintain a friendly, helpful tone throughout your response
-7. Use simple, clear language that anyone can understand
+1. Respond in plain text without any special formatting (no markdown, no **, --, or other symbols)
+2. Write as if you're having a casual conversation, using natural language and expressions
+3. Use the provided information accurately but present it conversationally
+4. Avoid technical or formal language unless specifically asked
+5. Don't use bullet points or numbered lists - express ideas in flowing paragraphs
+6. If you need to emphasize something, use natural language emphasis rather than formatting
+7. Keep responses concise but friendly and engaging
+8. Use everyday examples and analogies when helpful
+9. Write as a knowledgeable friend would speak, not as a formal document
 
-Remember: You are having a natural conversation. The user doesn't need to know about the reference materials - just provide helpful, accurate answers in a conversational way.
+Remember: You're having a friendly chat. Your goal is to be helpful while sounding completely natural and conversational. No special formatting or symbols - just clear, engaging communication.
 
 Question: "${userQuestion}"`;
 
