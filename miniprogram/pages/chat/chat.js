@@ -1,7 +1,7 @@
 Page({
   data: {
     messages: [
-      { role: 'bot', content: '您好！我是智能助手' }, // 添加初始测试消息
+      { role: 'bot', content: '您好！我是学舌AI智能助手' }, // 添加初始测试消息
       { role: 'user', content: '你好！' }
     ],
     inputValue: '',

@@ -1,0 +1,103 @@
+<view class="user-container">
+  <!-- 未登录状态 -->
+  <view class="user-info" wx:if="{{!isLoggedIn}}">
+    <view class="user-header">
+      <button class="avatar-wrapper" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+        <image class="avatar" src="{{avatarUrl}}"></image>
+      </button>
+      <view class="user-detail">
+        <input 
+          type="nickname" 
+          class="nickname-input" 
+          placeholder="请输入昵称"
+          placeholder-class="input-placeholder"
+          bindchange="onInputNickname"
+        />
+        <button 
+          class="login-btn" 
+          bindtap="handleLogin"
+          loading="{{isLoading}}">
+          确认登录
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 已登录状态 -->
+  <view class="user-info" wx:else>
+    <view class="user-header">
+      <view class="header-bg"></view>
+      <view class="user-info-content">
+        <image class="avatar" src="{{userInfo.avatarUrl}}" mode="aspectFill" />
+        <view class="user-detail">
+          <view class="nickname">{{userInfo.nickName || '微信用户'}}</view>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 数据统计卡片 -->
+    <view class="stats-card">
+      <view class="stat-item">
+        <text class="stat-num">{{documentCount}}</text>
+        <text class="stat-label">文档数量</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-num">{{chatCount}}</text>
+        <text class="stat-label">对话次数</text>
+      </view>
+    </view>
+
+    <!-- 最近文档 -->
+    <view class="section-card" wx:if="{{recentDocuments.length > 0}}">
+      <view class="section-header">
+        <view class="section-icon">📋</view>
+        <text class="section-title">最近文档</text>
+      </view>
+      <view class="doc-list">
+        <view class="doc-item" wx:for="{{recentDocuments}}" wx:key="_id">
+          <view class="doc-info">
+            <text class="doc-name">{{item.name}}</text>
+            <text class="doc-time">{{item.uploadTime}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 最近对话 -->
+    <view class="section-card" wx:if="{{recentChats.length > 0}}">
+      <view class="section-header">
+        <view class="section-icon">💭</view>
+        <text class="section-title">最近对话</text>
+      </view>
+      <view class="chat-list">
+        <view class="chat-item" wx:for="{{recentChats}}" wx:key="_id">
+          <text class="chat-content">{{item.content}}</text>
+          <text class="chat-time">{{item.createTime}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 授权弹窗 -->
+  <view class="auth-modal" wx:if="{{isShowAuth}}">
+    <view class="auth-content">
+      <view class="auth-title">申请获取以下权限</view>
+      <view class="auth-subtitle">获得你的公开信息(昵称、头像等)</view>
+      <view class="auth-item">
+        <image class="wechat-icon" src="/images/wechat.png" />
+        <view class="auth-info">
+          <view class="auth-name">微信授权登录</view>
+          <view class="auth-desc">获得你的公开信息</view>
+        </view>
+        <image class="check-icon" src="/images/check.png" />
+      </view>
+      <button 
+        class="confirm-btn" 
+        bindtap="handleGetUserProfile"
+        loading="{{isLoading}}">
+        确定
+      </button>
+      <view class="cancel-btn" bindtap="handleCancel">取消</view>
+    </view>
+  </view>
+</view> 

@@ -4,7 +4,9 @@ const mammoth = require('mammoth'); // 用于处理 Word 文档
 const iconv = require('iconv-lite'); // 用于处理编码
 const pdf = require('pdf-parse');
 
-cloud.init();
+cloud.init({
+  env: 'llm-deploy-6g57q5hueb6d38ff'  // 使用相同的云环境ID
+});
 
 exports.main = async (event, context) => {
   const { fileID } = event;
@@ -60,7 +62,8 @@ exports.main = async (event, context) => {
             fileID,
             content: chunk,
             vector: embeddings[index],
-            timestamp: new Date()
+            timestamp: new Date(),
+            _openid: cloud.getWXContext().OPENID
           }
         });
       })

@@ -1,11 +1,12 @@
 {
   "cloud": true,
   "pages": [
-    "pages/chat/chat"
+    "pages/chat/chat",
+    "pages/user/user"
   ],
   "window": {
     "backgroundColor": "#F6F6F6",
-    "navigationBarTitleText": "AI 助手",
+    "navigationBarTitleText": "学舌",
     "navigationBarBackgroundColor": "#ffffff",
     "navigationBarTextStyle": "black"
   },
@@ -19,9 +20,32 @@
     },
     "scope.record": {
       "desc": "需要您的授权来使用语音输入功能"
+    },
+    "scope.userInfo": {
+      "desc": "你的个人信息将用于完善会员资料"
     }
   },
   "plugins": {
 
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#007AFF",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/chat/chat",
+        "text": "对话",
+        "iconPath": "images/chat.png",
+        "selectedIconPath": "images/chat-active.png"
+      },
+      {
+        "pagePath": "pages/user/user",
+        "text": "我的",
+        "iconPath": "images/user.png",
+        "selectedIconPath": "images/user-active.png"
+      }
+    ]
   }
 } 

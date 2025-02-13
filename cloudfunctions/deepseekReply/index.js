@@ -109,7 +109,11 @@ function cosineSimilarity(vecA, vecB) {
 // 查找相似文档
 async function findSimilarDocuments(queryVector, db) {
   try {
-    const docs = await db.collection('document_vectors').get();
+    const docs = await db.collection('document_vectors')
+      .where({
+        _openid: cloud.getWXContext().OPENID // 只查询当前用户的文档
+      })
+      .get();
     
     // 计算所有文档的相似度并排序
     const scoredDocs = docs.data
