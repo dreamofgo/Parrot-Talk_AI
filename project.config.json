@@ -8,7 +8,8 @@
       "ignore": [],
       "disablePlugins": [],
       "outputPath": ""
-    }
+    },
+    "minified": true
   },
   "appid": "wxaf907a0631769656",
   "compileType": "miniprogram",

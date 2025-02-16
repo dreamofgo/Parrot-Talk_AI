@@ -6,7 +6,8 @@ Page({
     ],
     inputValue: '',
     isRecording: false,
-    documents: [] // 存储文档列表
+    documents: [], // 存储文档列表
+    lastId: ''   // 最新消息ID
   },
 
   // 输入处理
@@ -17,7 +18,7 @@ Page({
   },
 
   // 发送消息
-  sendMessage() {
+  async sendMessage() {
     const message = this.data.inputValue;
     if (!message.trim()) return;
 
@@ -132,6 +133,14 @@ Page({
     this.loadDocuments();
   },
 
+  onShow() {
+    // 页面显示时刷新数据
+  },
+
+  onHide() {
+    // 页面隐藏时保存状态
+  },
+
   // 添加滚动到底部方法
   scrollToBottom() {
     const lastIndex = this.data.messages.length - 1;
@@ -141,7 +150,7 @@ Page({
   },
 
   // 上传文档
-  uploadDocument() {
+  async uploadDocument() {
     wx.chooseMessageFile({
       count: 1,
       type: 'file',
